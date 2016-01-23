@@ -1,0 +1,69 @@
+Queries:
+1) Show all the models from a specific brand:
+
+Transcript show: ('The list of all the models from the brand:'); cr.
+1 to: (brand3 model size) do: [:x | Transcript show: ((brand3 model at:x) modelName); cr.]
+
+2) Display all the current kilometres of all the registered vehicles:
+
+1 to: (booking bookingRelator vehicle size) do: [:y | Transcript show: ((((booking bookingRelator vehicle)asOrderedCollection) at: y) vehCurrentKm );cr. ].
+
+3) Show the list of all vehicles which are not available at the moment:
+
+phase_v1 := NotAvailableVehPhase new.
+phase_v2 := InsuredVehPhase insuranceCost: 252  insuranceType: 'full' insurancePeriod: '1 year'.
+phase_v3 := AvailableVehPhase availStatus: 'available'.
+
+veh1 := VehicleKind vehCurrentKm: 325 vehEngineSize: 25 price: 2523. 
+cust1:= CustomerRoleMixin drivingLicenseId: 326326678 email: 't2' contactNumber: 3563737 address: 'dgjhg sdgihs 34'.
+booking1:= BookingRelator bookID: 001 bookFromDate: '21/12/2014'bookToDate: '25/12/2014' cost: 123 vehicle: veh1 customer: cust1.
+phase_v1 booking: booking1.
+brand1 := BrandCollective new.
+brand2 := BrandCollective new.
+model1:= ModelRole modelName: '141' modelYear: '2015' brand: brand1.
+veh2 := VehicleKind vehCurrentKm: 124 vehEngineSize: 145 price: 124 model: model1 phase: phase_v1
+veh2 phase booking bookFromDate. 
+veh3 := VehicleKind vehCurrentKm: 356 vehEngineSize: 24 price: 4633 model: model1 phase: phase_v1.
+veh4 := VehicleKind vehCurrentKm: 2525 vehEngineSize: 234 price: 5256 model: model1 phase: phase_v1.
+veh5 := VehicleKind vehCurrentKm: 123 vehEngineSize: 44 price: 15665 model: (brand2 model at:1) phase: phase_v2.
+veh6 := VehicleKind vehCurrentKm: 555 vehEngineSize: 33 price: 25624 model: (brand2 model at:2) phase: phase_v3.
+
+veh_collection := OrderedCollection new.
+veh_collection add: (veh2).
+veh_collection add: (veh3).
+veh_collection add: (veh4).
+veh_collection add: (veh5).
+veh_collection add: (veh6).
+
+1 to: (veh_collection size) do: [:var | Transcript show: ((veh_collection at: var)phase = phase_v1); cr ].
+
+4)  Select all the vehicles with engine size greater than 50:
+
+brm1 := BookingRelatorModel new.
+brm1 bookingRelator vehicle select: [ :x | x vehEngineSize > 50 ].
+
+5) Display the information about the  customers, such that if it is a CorporateCustomer, the query should display the organization name of the customer, otherwise the query should yield the contact number of the costumer:
+brm1 := BookingRelatorModel new.
+brm1 bookingRelator customer collect: [ :x | (x class = CorporateCustomerRole) ifTrue: [ x orgName  ] ifFalse: [ x contactNumber ] ] 
+
+6) Check if all vehicles satisfy the condition that the price should exceed 10 thousand units:
+
+brm1 := BookingRelatorModel new.
+brm1 bookingRelator vehicle allSatisfy: [ :x | x price > 10000 ]
+
+7) Find the vehicles from the registered bookings that have the lowest kilometrage:
+
+( brm1 bookingRelator vehicle collect: [ :x | x vehCurrentKm]) fold: [ :x :y | x > y ifTrue: y ifFalse: x] 
+
+8) List the information about the costumers that currently have booked a reservation:
+
+book1 := BookingRelator bookID:1 bookFromDate: '25/12/2014' bookToDate: '29/12/2014' cost: 1234 vehicle: (((brm1 bookingRelator vehicle)asOrderedCollection)at: 1) customer: (((brm1 bookingRelator customer)asOrderedCollection)at: 1).
+book2 := BookingRelator bookID:2 bookFromDate: '27/12/2014' bookToDate: '30/12/2014' cost: 2462 vehicle: (((brm1 bookingRelator vehicle)asOrderedCollection)at: 3) customer: (((brm1 bookingRelator customer)asOrderedCollection)at: 1).
+book3 := BookingRelator bookID:3 bookFromDate: '31/12/2014' bookToDate: '02/01/2015' cost: 83607 vehicle: (((brm1 bookingRelator vehicle)asOrderedCollection)at: 2) customer: (((brm1 bookingRelator customer)asOrderedCollection)at: 1).
+book4 := BookingRelator bookID:4 bookFromDate: '03/01/2015' bookToDate: '07/01/2015' cost: 266 vehicle: (((brm1 bookingRelator vehicle)asOrderedCollection)at: 5) customer: (((brm1 bookingRelator customer)asOrderedCollection)at: 5).
+book5 := BookingRelator bookID:5 bookFromDate: '09/01/2015' bookToDate: '16/01/2015' cost: 637 vehicle: (((brm1 bookingRelator vehicle)asOrderedCollection)at: 6) customer: (((brm1 bookingRelator customer)asOrderedCollection)at: 5).
+
+
+
+brm1 := BookingRelatorModel new.
+1 to: (brm1 bookingRelator customer size) do: [ :x | Transcript show: (((brm1 bookingRelator customer)asOrderedCollection)at: x) mediation ;cr]. 
